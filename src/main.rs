@@ -3,6 +3,9 @@ use image::imageops::colorops::ColorMap;
 
 use bitvec::prelude::*;
 
+use std::fs::File;
+use std::io::prelude::*;
+
 struct PrintableImage {
     data: Vec<[u8; 8]>,
 }
@@ -17,6 +20,9 @@ impl PrintableImage {
         for row in self.data.iter() {
             PrintableImage::append_data_row(&mut command_vec, &row);
         }
+        command_vec.append(&mut PrintableImage::bytes_per_line(0));
+        command_vec.append(&mut vec![PrintableImage::SYN; 56]);
+        command_vec.append(&mut vec![PrintableImage::SYN; 56]);
         command_vec.append(&mut PrintableImage::get_status());
         command_vec
     }
@@ -51,7 +57,7 @@ impl PrintableImage {
     /// The number of bytes in the following row(s).
     /// Seems to take one byte argument.
     fn bytes_per_line(num: u8) -> Vec<u8> {
-        vec![PrintableImage::ESC, 'B' as u8, num]
+        vec![PrintableImage::ESC, 'D' as u8, num]
     }
 
     /// The tape's color. Encoding unknown.
@@ -63,7 +69,7 @@ impl PrintableImage {
     /// Probably whether (or how?) to print the tab character.
     /// Seems to take one byte argument.
     fn dottab() -> Vec<u8> {
-        vec![PrintableImage::ESC, 'D' as u8, 0]
+        vec![PrintableImage::ESC, 'B' as u8, 0]
     }
 
 // constants:
@@ -71,9 +77,9 @@ impl PrintableImage {
 // ESC = 0x1b //next byte encodes command
 //      commands according to imgprint perlscript
 //      A getstatus
-//      B bytesperline, one argument, used as ESC, B, num_of_bytes e.g. 1b 44 07
+//      D bytesperline, one argument, used as ESC, B, num_of_bytes e.g. 1b 44 07
 //      C tapecolour, one argument, 0 known used
-//      D dottab, one argument, 0 known used
+//      B dottab, one argument, 0 known used
 
 }
 
@@ -102,7 +108,7 @@ fn convert_to_bw(image: &DynamicImage) -> ImageResult<GrayImage> {
 }
 
 fn px_to_black_or_white (pix: &mut Luma<u8>) {
-    let colormap = DynamicBiLevel{threshold: 70};
+    let colormap = DynamicBiLevel{threshold: 128};
     colormap.map_color(pix);
 }
 
@@ -114,12 +120,16 @@ fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
     };
     //pi.data.iter().for_each(|row| println!("{:?}", row));
     let commands = pi.to_commands();
+    let mut f = File::create("commands")?;
+    f.write_all(commands.as_slice())?;
     Ok(())
 }
 
 fn row_to_bitvec(row: image::buffer::Pixels<Luma<u8>>) -> Result<[u8; 8], Box<dyn std::error::Error>> {
-    let bitvec: BitVec<Lsb0, u8> = row.map(|pix| !is_pixel_white(pix)).collect();
+    let bitvec: BitVec<Msb0, u8> = row.map(|pix| !is_pixel_white(pix)).collect();
+    println!("{}", bitvec);
     let bytevec = &bitvec.into_vec();
+    println!("{:?}", bytevec);
     let mut result = [0 as u8; 8];
     let bytes = &bytevec.as_slice()[..result.len()]; // panics if not enough data
     result.copy_from_slice(bytes);

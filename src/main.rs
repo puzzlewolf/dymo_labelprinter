@@ -1,8 +1,11 @@
 use image::*;
 use image::imageops::colorops::ColorMap;
 
+use bitvec::prelude::*;
+
+
 fn main() -> Result<(), Box<dyn std::error::Error>> { 
-    let pic = image::open("testdata/valodim.png")?;
+    let pic = image::open("testdata/bold.png")?;
 	if pic.dimensions().1 != 64 {
 		println!("height of image must be 64, not {}!", pic.dimensions().1);
 		return Ok(())
@@ -11,21 +14,41 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 		println!("image must not have transparency!");
 		return Ok(())
     }
-    //println!("pic.dimensions: {:?}", pic.dimensions());
+    println!("Dimensions of image: {:?}", pic.dimensions());
+    let pic = pic.rotate90();
     let new_pic = convert_to_bw(&pic).unwrap();
     new_pic.save("output/output.png")?;
+    print(&new_pic)?;
     Ok(())
 }
 
 fn convert_to_bw(image: &DynamicImage) -> ImageResult<GrayImage> {
     let mut gray_image = image.grayscale().into_luma();
-    gray_image.pixels_mut().for_each(|pix| to_black_or_white(pix));
+    gray_image.pixels_mut().for_each(|pix| px_to_black_or_white(pix));
     Ok(gray_image)
 }
 
-fn to_black_or_white (pix: &mut Luma<u8>) {
+fn px_to_black_or_white (pix: &mut Luma<u8>) {
     let colormap = DynamicBiLevel{threshold: 70};
     colormap.map_color(pix);
+}
+
+fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> { 
+    let bitvecs: Vec<BitVec<Lsb0, u8>> = image.rows().map(|row| row_to_bitvec(row).unwrap()).collect();
+    //println!("{:?}", bitvecs);
+    bitvecs.iter().for_each(|bitvec| println!("{:x}", bitvec));
+    Ok(())
+}
+
+fn row_to_bitvec(row: image::buffer::Pixels<Luma<u8>>) -> Result<BitVec<Lsb0, u8>, Box<dyn std::error::Error>> { 
+    //let mut result: BitVec<Lsb0, u8> = BitVec::new();
+    //result.extend(row.map(|pix| is_pixel_white(pix)));
+    let result: BitVec<Lsb0, u8> = row.map(|pix| is_pixel_white(pix)).collect();
+    Ok(result)
+}
+
+fn is_pixel_white(pixel: &Luma<u8>) -> bool {
+    pixel.to_luma()[0] == 0xFF 
 }
 
 // constants:

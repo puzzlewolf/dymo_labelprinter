@@ -34,16 +34,18 @@ fn px_to_black_or_white (pix: &mut Luma<u8>) {
 }
 
 fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> { 
-    let bitvecs: Vec<BitVec<Lsb0, u8>> = image.rows().map(|row| row_to_bitvec(row).unwrap()).collect();
+    let rows: Vec<[u8; 8]> = image.rows().map(|row| row_to_bitvec(row).unwrap()).collect();
     //println!("{:?}", bitvecs);
-    bitvecs.iter().for_each(|bitvec| println!("{:x}", bitvec));
+    rows.iter().for_each(|row| println!("{:?}", row));
     Ok(())
 }
 
-fn row_to_bitvec(row: image::buffer::Pixels<Luma<u8>>) -> Result<BitVec<Lsb0, u8>, Box<dyn std::error::Error>> { 
-    //let mut result: BitVec<Lsb0, u8> = BitVec::new();
-    //result.extend(row.map(|pix| is_pixel_white(pix)));
-    let result: BitVec<Lsb0, u8> = row.map(|pix| is_pixel_white(pix)).collect();
+fn row_to_bitvec(row: image::buffer::Pixels<Luma<u8>>) -> Result<[u8; 8], Box<dyn std::error::Error>> {
+    let bitvec: BitVec<Lsb0, u8> = row.map(|pix| is_pixel_white(pix)).collect();
+    let bytevec = &bitvec.into_vec();
+    let mut result = [0 as u8; 8];
+    let bytes = &bytevec.as_slice()[..result.len()]; // panics if not enough data
+    result.copy_from_slice(bytes);
     Ok(result)
 }
 

@@ -1,5 +1,5 @@
-use image::*;
 use image::imageops::colorops::ColorMap;
+use image::*;
 
 use bitvec::prelude::*;
 
@@ -31,9 +31,7 @@ impl CommandAccumulator {
     //    command_vec
     //}
 
-    fn image_to_lines(image: &PrintableImage) {
-
-    }
+    fn image_to_lines(image: &PrintableImage) {}
 
     /// Add the print commands for one row of the image.
     /// Before the line, `bytes_per_line` must be set to the correct value.
@@ -71,8 +69,8 @@ impl CommandAccumulator {
     ///
     /// 56 is recommended as space before and after the label text.
     fn append_whitespace(&self, num: usize) {
-      self.bytes_per_line(0);
-      (0..num).for_each(|_| self.accu.push(Self::SYN));
+        self.bytes_per_line(0);
+        (0..num).for_each(|_| self.accu.push(Self::SYN));
     }
 
     /// The number of bytes in the following row(s).
@@ -106,25 +104,25 @@ impl CommandAccumulator {
         self.accu.push(0 as u8);
     }
 
-// constants:
-// SYN = 0x16 //marks start of line
-// ESC = 0x1b //next byte encodes command
-//      commands according to imgprint perlscript
-//      A getstatus
-//      D bytesperline, one argument, used as ESC, B, num_of_bytes e.g. 1b 44 07
-//      C tapecolour, one argument, 0 known used
-//      B dottab, one argument, 0 known used
+    // constants:
+    // SYN = 0x16 //marks start of line
+    // ESC = 0x1b //next byte encodes command
+    //      commands according to imgprint perlscript
+    //      A getstatus
+    //      D bytesperline, one argument, used as ESC, B, num_of_bytes e.g. 1b 44 07
+    //      C tapecolour, one argument, 0 known used
+    //      B dottab, one argument, 0 known used
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> { 
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pic = image::open("testdata/bold.png")?;
-	if pic.dimensions().1 != 64 {
-		println!("height of image must be 64, not {}!", pic.dimensions().1);
-		return Ok(())
-	}
+    if pic.dimensions().1 != 64 {
+        println!("height of image must be 64, not {}!", pic.dimensions().1);
+        return Ok(());
+    }
     if pic.color().has_alpha() {
-		println!("image must not have transparency!");
-		return Ok(())
+        println!("image must not have transparency!");
+        return Ok(());
     }
     println!("Dimensions of image: {:?}", pic.dimensions());
     let pic = pic.rotate90();
@@ -136,21 +134,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 fn convert_to_bw(image: &DynamicImage) -> ImageResult<GrayImage> {
     let mut gray_image = image.grayscale().into_luma();
-    gray_image.pixels_mut().for_each(|pix| px_to_black_or_white(pix));
+    gray_image
+        .pixels_mut()
+        .for_each(|pix| px_to_black_or_white(pix));
     Ok(gray_image)
 }
 
-fn px_to_black_or_white (pix: &mut Luma<u8>) {
-    let colormap = DynamicBiLevel{threshold: 128};
+fn px_to_black_or_white(pix: &mut Luma<u8>) {
+    let colormap = DynamicBiLevel { threshold: 128 };
     colormap.map_color(pix);
 }
 
-fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> { 
-    let rows: Vec<[u8; 8]> = image.rows().map(|row| row_to_bitvec(row).unwrap()).collect();
+fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
+    let rows: Vec<[u8; 8]> = image
+        .rows()
+        .map(|row| row_to_bitvec(row).unwrap())
+        .collect();
     //println!("{:?}", bitvecs);
-    let pi = PrintableImage {
-        data: rows
-    };
+    let pi = PrintableImage { data: rows };
     //pi.data.iter().for_each(|row| println!("{:?}", row));
     let commands = pi.to_commands();
     let mut f = File::create("commands")?;
@@ -158,7 +159,9 @@ fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn row_to_bitvec(row: image::buffer::Pixels<Luma<u8>>) -> Result<[u8; 8], Box<dyn std::error::Error>> {
+fn row_to_bitvec(
+    row: image::buffer::Pixels<Luma<u8>>,
+) -> Result<[u8; 8], Box<dyn std::error::Error>> {
     let bitvec: BitVec<Msb0, u8> = row.map(|pix| !is_pixel_white(pix)).collect();
     println!("{}", bitvec);
     let bytevec = &bitvec.into_vec();
@@ -202,44 +205,44 @@ impl ColorMap for DynamicBiLevel {
 
 #[test]
 fn test_append_row() {
-  let ca = CommandAccumulator{accu: Vec::new()};
-  ca.append_data_row(&mut [0u8, 1u8, 2u8, 3u8, 4u8, 5u8,6u8, 7u8]);
-  assert_eq!(ca.accu[0..7], [17u8; 7]);
-  assert_eq!(ca.accu[7], 0x16); 
-  assert_eq!(ca.accu[8..16], [0,1,2,3,4,5,6,7]);
+    let ca = CommandAccumulator { accu: Vec::new() };
+    ca.append_data_row(&mut [0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8]);
+    assert_eq!(ca.accu[0..7], [17u8; 7]);
+    assert_eq!(ca.accu[7], 0x16);
+    assert_eq!(ca.accu[8..16], [0, 1, 2, 3, 4, 5, 6, 7]);
 }
 
 #[test]
 fn test_preamble() {
-  let ca = CommandAccumulator{accu: Vec::new()};
-  ca.preamble(false);
-  assert_eq!(ca.accu[0..6], [0x1b, 0x43, 0, 0x1b, 0x44, 0]);
+    let ca = CommandAccumulator { accu: Vec::new() };
+    ca.preamble(false);
+    assert_eq!(ca.accu[0..6], [0x1b, 0x43, 0, 0x1b, 0x44, 0]);
 }
 
 #[test]
 fn test_get_status() {
-  let ca = CommandAccumulator{accu: Vec::new()};
-  ca.get_status();
-  assert_eq!(ca.accu[0..2], [0x1b, 0x41]);
+    let ca = CommandAccumulator { accu: Vec::new() };
+    ca.get_status();
+    assert_eq!(ca.accu[0..2], [0x1b, 0x41]);
 }
 
 #[test]
 fn test_bytes_per_line() {
-  let ca = CommandAccumulator{accu: Vec::new()};
-  ca.bytes_per_line(8);
-  assert_eq!(ca.accu[0..3], [0x1b, 0x42, 0x08]);
+    let ca = CommandAccumulator { accu: Vec::new() };
+    ca.bytes_per_line(8);
+    assert_eq!(ca.accu[0..3], [0x1b, 0x42, 0x08]);
 }
 
 #[test]
 fn test_tape_color() {
-  let ca = CommandAccumulator{accu: Vec::new()};
-  ca.tape_color();
-  assert_eq!(ca.accu[0..3], [0x1b, 0x43, 0]);
+    let ca = CommandAccumulator { accu: Vec::new() };
+    ca.tape_color();
+    assert_eq!(ca.accu[0..3], [0x1b, 0x43, 0]);
 }
 
 #[test]
 fn test_dottab() {
-  let ca = CommandAccumulator{accu: Vec::new()};
-  ca.dottab();
-  assert_eq!(ca.accu[0..3], [0x1b, 0x44, 0]);
+    let ca = CommandAccumulator { accu: Vec::new() };
+    ca.dottab();
+    assert_eq!(ca.accu[0..3], [0x1b, 0x44, 0]);
 }

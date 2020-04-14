@@ -31,26 +31,41 @@ impl CommandAccumulator {
     //    command_vec
     //}
 
-    fn image_to_lines(image: &PrintableImage) {}
+    fn new() -> Self {
+        CommandAccumulator {
+            accu: Vec::<u8>::new()
+        }
+    }
+
+    fn append_image_rows(&mut self, image: &PrintableImage) {
+        self.bytes_per_line(8);
+        image.data.iter().for_each(|row| self.append_data_row(&row));
+    }
+
+    pub fn generate_commands(&mut self, image: &PrintableImage) {
+        self.preamble(true);
+        self.append_image_rows(image);
+        self.postamble(true);
+    }
 
     /// Add the print commands for one row of the image.
     /// Before the line, `bytes_per_line` must be set to the correct value.
-    fn append_data_row(&self, row: &[u8; 8]) {
+    fn append_data_row(&mut self, row: &[u8; 8]) {
         self.accu.push(Self::SYN);
         self.accu.extend(row);
     }
 
-    fn preamble(&self, add_whitespace: bool) {
+    fn preamble(&mut self, add_whitespace: bool) {
         self.tape_color();
         self.dottab();
         if add_whitespace {
-            self.append_whitespace(56);
+            self.whitespace(56);
         };
     }
 
-    fn postamble(&self, add_whitespace: bool) {
+    fn postamble(&mut self, add_whitespace: bool) {
         if add_whitespace {
-            self.append_whitespace(56);
+            self.whitespace(56);
         };
         self.get_status();
     }
@@ -68,21 +83,21 @@ impl CommandAccumulator {
     /// Add `num` lines of whitespace.
     ///
     /// 56 is recommended as space before and after the label text.
-    fn append_whitespace(&self, num: usize) {
+    fn whitespace(&mut self, num: usize) {
         self.bytes_per_line(0);
         (0..num).for_each(|_| self.accu.push(Self::SYN));
     }
 
     /// The number of bytes in the following row(s).
     /// Seems to take no arguments.
-    fn get_status(&self) {
+    fn get_status(&mut self) {
         self.accu.push(Self::ESC);
         self.accu.push('A' as u8);
     }
 
     /// The number of bytes in the following row(s).
     /// Seems to take one byte argument.
-    fn bytes_per_line(&self, num: u8) {
+    fn bytes_per_line(&mut self, num: u8) {
         self.accu.push(Self::ESC);
         self.accu.push('D' as u8);
         self.accu.push(num);
@@ -90,7 +105,7 @@ impl CommandAccumulator {
 
     /// The tape's color. Encoding unknown.
     /// Seems to take one byte argument.
-    fn tape_color(&self) {
+    fn tape_color(&mut self) {
         self.accu.push(Self::ESC);
         self.accu.push('C' as u8);
         self.accu.push(0 as u8);
@@ -98,7 +113,7 @@ impl CommandAccumulator {
 
     /// Probably whether (or how?) to print the tab character.
     /// Seems to take one byte argument.
-    fn dottab(&self) {
+    fn dottab(&mut self) {
         self.accu.push(Self::ESC);
         self.accu.push('B' as u8);
         self.accu.push(0 as u8);
@@ -153,7 +168,9 @@ fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
     //println!("{:?}", bitvecs);
     let pi = PrintableImage { data: rows };
     //pi.data.iter().for_each(|row| println!("{:?}", row));
-    let commands = pi.to_commands();
+    let mut ca = CommandAccumulator::new();
+    ca.generate_commands(&pi);
+    let commands = ca.accu;
     let mut f = File::create("commands")?;
     f.write_all(commands.as_slice())?;
     Ok(())
@@ -205,7 +222,9 @@ impl ColorMap for DynamicBiLevel {
 
 #[test]
 fn test_append_row() {
-    let ca = CommandAccumulator { accu: Vec::new() };
+    let mut ca = CommandAccumulator { accu: Vec::new() };
+    (0..7).for_each(|_| ca.accu.push(17u8));
+
     ca.append_data_row(&mut [0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8]);
     assert_eq!(ca.accu[0..7], [17u8; 7]);
     assert_eq!(ca.accu[7], 0x16);
@@ -214,35 +233,35 @@ fn test_append_row() {
 
 #[test]
 fn test_preamble() {
-    let ca = CommandAccumulator { accu: Vec::new() };
+    let mut ca = CommandAccumulator { accu: Vec::new() };
     ca.preamble(false);
-    assert_eq!(ca.accu[0..6], [0x1b, 0x43, 0, 0x1b, 0x44, 0]);
+    assert_eq!(ca.accu[0..6], [0x1b, 0x43, 0, 0x1b, 0x42, 0]);
 }
 
 #[test]
 fn test_get_status() {
-    let ca = CommandAccumulator { accu: Vec::new() };
+    let mut ca = CommandAccumulator { accu: Vec::new() };
     ca.get_status();
     assert_eq!(ca.accu[0..2], [0x1b, 0x41]);
 }
 
 #[test]
 fn test_bytes_per_line() {
-    let ca = CommandAccumulator { accu: Vec::new() };
+    let mut ca = CommandAccumulator { accu: Vec::new() };
     ca.bytes_per_line(8);
-    assert_eq!(ca.accu[0..3], [0x1b, 0x42, 0x08]);
+    assert_eq!(ca.accu[0..3], [0x1b, 0x44, 0x08]);
 }
 
 #[test]
 fn test_tape_color() {
-    let ca = CommandAccumulator { accu: Vec::new() };
+    let mut ca = CommandAccumulator { accu: Vec::new() };
     ca.tape_color();
     assert_eq!(ca.accu[0..3], [0x1b, 0x43, 0]);
 }
 
 #[test]
 fn test_dottab() {
-    let ca = CommandAccumulator { accu: Vec::new() };
+    let mut ca = CommandAccumulator { accu: Vec::new() };
     ca.dottab();
-    assert_eq!(ca.accu[0..3], [0x1b, 0x44, 0]);
+    assert_eq!(ca.accu[0..3], [0x1b, 0x42, 0]);
 }

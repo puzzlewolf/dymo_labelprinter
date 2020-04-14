@@ -101,9 +101,9 @@ impl CommandAccumulator {
     // ESC = 0x1b //next byte encodes command
     //      commands according to imgprint perlscript
     //      A getstatus
-    //      D bytesperline, one argument, used as ESC, B, num_of_bytes e.g. 1b 44 07
-    //      C tapecolour, one argument, 0 known used
     //      B dottab, one argument, 0 known used
+    //      C tapecolour, one argument, 0 known used
+    //      D bytesperline, one argument, used as ESC, D, num_of_bytes e.g. 1b 44 07
 }
 
 #[test]

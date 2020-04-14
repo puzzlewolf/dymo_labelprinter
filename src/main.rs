@@ -47,6 +47,7 @@ fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
     //println!("{:?}", bitvecs);
     let pi = PrintableImage { data: rows };
     //pi.data.iter().for_each(|row| println!("{:?}", row));
+    print!("{}", pi.preview());
     let mut ca = CommandAccumulator::new();
     ca.generate_commands(&pi);
     let commands = ca.accu;
@@ -59,9 +60,7 @@ fn row_to_bitvec(
     row: image::buffer::Pixels<Luma<u8>>,
 ) -> Result<[u8; 8], Box<dyn std::error::Error>> {
     let bitvec: BitVec<Msb0, u8> = row.map(|pix| !is_pixel_white(pix)).collect();
-    println!("{}", bitvec);
     let bytevec = &bitvec.into_vec();
-    println!("{:?}", bytevec);
     let mut result = [0 as u8; 8];
     let bytes = &bytevec.as_slice()[..result.len()]; // panics if not enough data
     result.copy_from_slice(bytes);

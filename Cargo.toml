@@ -1,5 +1,5 @@
 [package]
-name = "dymo-hid-rs"
+name = "dymo_hid"
 version = "0.1.0"
 authors = ["puzzlewolf <mail@nora.pink>"]
 edition = "2018"

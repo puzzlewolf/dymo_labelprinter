@@ -8,6 +8,15 @@ impl CommandAccumulator {
     const SYN: u8 = 0x16;
     const ESC: u8 = 0x1b;
 
+    // constants:
+    // SYN = 0x16 //marks start of line
+    // ESC = 0x1b //next byte encodes command
+    //      commands according to imgprint perlscript
+    //      A getstatus
+    //      B dottab, one argument, 0 known used
+    //      C tapecolour, one argument, 0 known used
+    //      D bytesperline, one argument, used as ESC, D, num_of_bytes e.g. 1b 44 07
+
     pub fn new() -> Self {
         CommandAccumulator {
             accu: Vec::<u8>::new()
@@ -16,9 +25,11 @@ impl CommandAccumulator {
 
     fn append_image_rows(&mut self, image: &PrintableImage) {
         self.bytes_per_line(8);
-        image.data.iter().for_each(|row| self.append_data_row(&row));
+        image.data.iter().for_each(|row| self.add_data_row(&row));
     }
 
+    /// Generates all commands necessary to print an image.
+    /// Includes some whitespace in front of and behind the label.
     pub fn generate_commands(&mut self, image: &PrintableImage) {
         self.preamble(true);
         self.append_image_rows(image);
@@ -27,7 +38,7 @@ impl CommandAccumulator {
 
     /// Add the print commands for one row of the image.
     /// Before the line, `bytes_per_line` must be set to the correct value.
-    fn append_data_row(&mut self, row: &[u8; 8]) {
+    fn add_data_row(&mut self, row: &[u8; 8]) {
         self.accu.push(Self::SYN);
         self.accu.extend(row);
     }
@@ -46,16 +57,6 @@ impl CommandAccumulator {
         };
         self.get_status();
     }
-
-    //fn print_commands(&self) {
-    //    let mut c = self.to_commands();
-    //    while c.len() > 8 {
-    //        let tmp = c.split_off(8);
-    //        println!("{:x?}", &c[0..8]);
-    //        //c.iter().for_each(|byte| print!("{:x?} ", byte));
-    //        c = tmp;
-    //    }
-    //}
 
     /// Add `num` lines of whitespace.
     ///
@@ -95,15 +96,6 @@ impl CommandAccumulator {
         self.accu.push('B' as u8);
         self.accu.push(0 as u8);
     }
-
-    // constants:
-    // SYN = 0x16 //marks start of line
-    // ESC = 0x1b //next byte encodes command
-    //      commands according to imgprint perlscript
-    //      A getstatus
-    //      B dottab, one argument, 0 known used
-    //      C tapecolour, one argument, 0 known used
-    //      D bytesperline, one argument, used as ESC, D, num_of_bytes e.g. 1b 44 07
 }
 
 #[test]

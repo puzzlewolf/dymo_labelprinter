@@ -1,4 +1,6 @@
+use crate::color_map::DynamicBiLevel;
 use bitvec::prelude::*;
+use image::imageops::colorops::ColorMap;
 use image::*;
 
 /// represents an image that can be printed on a dymo label printer.
@@ -41,4 +43,17 @@ fn row_to_bitvec(
 
 fn is_pixel_white(pixel: &Luma<u8>) -> bool {
     pixel.to_luma()[0] == 0xFF
+}
+
+pub fn convert_to_bw(image: &DynamicImage, threshold: u8) -> GrayImage {
+    let mut gray_image = image.grayscale().into_luma();
+    gray_image
+        .pixels_mut()
+        .for_each(|pixel| px_to_black_or_white(pixel, threshold));
+    gray_image
+}
+
+fn px_to_black_or_white(pixel: &mut Luma<u8>, threshold: u8) {
+    let colormap = DynamicBiLevel { threshold };
+    colormap.map_color(pixel);
 }

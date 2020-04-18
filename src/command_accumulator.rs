@@ -1,4 +1,4 @@
-use crate::printable_image::PrintableImage;
+use crate::image::PrintableImage;
 
 pub struct CommandAccumulator {
     pub accu: Vec<u8>,

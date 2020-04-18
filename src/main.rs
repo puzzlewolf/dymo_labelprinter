@@ -8,6 +8,8 @@ use std::io::{Error, ErrorKind};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pic = image::open("testdata/bold.png")?;
+    let threshold = 128u8;
+
     if pic.dimensions().1 != 64 {
         let errortext = format!(
             "Height of image must be exactly 64, not {}!",
@@ -22,10 +24,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Dimensions of image: {:?}", pic.dimensions());
 
     let pic = pic.rotate90();
-    let new_pic = convert_to_bw(&pic, 128);
-    new_pic.save("output/preview.png")?;
+    let bw_pic = convert_to_bw(&pic, threshold);
+    bw_pic.save("output/preview.png")?;
 
-    write_commands(&new_pic)?;
+    write_commands(&bw_pic)?;
     Ok(())
 }
 

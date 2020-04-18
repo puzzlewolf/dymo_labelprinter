@@ -10,7 +10,7 @@ use image::Luma;
 /// [`image`]: https://docs.rs/image
 #[derive(Clone, Copy)]
 pub struct DynamicBiLevel {
-    threshold: u8,
+    pub threshold: u8,
 }
 
 impl ColorMap for DynamicBiLevel {

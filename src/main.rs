@@ -1,27 +1,33 @@
+use image::imageops::colorops::ColorMap;
 use image::*;
 
 use bitvec::prelude::*;
 
-use std::fs::File;
-use std::io::prelude::*;
+use dymo_hid::color_map::DynamicBiLevel;
 use dymo_hid::command_accumulator::CommandAccumulator;
 use dymo_hid::printable_image::PrintableImage;
+use std::fs::File;
+use std::io::prelude::*;
+use std::io::{Error, ErrorKind};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pic = image::open("testdata/bold.png")?;
     if pic.dimensions().1 != 64 {
-        println!("height of image must be 64, not {}!", pic.dimensions().1);
-        return Ok(());
+        let errortext = format!(
+            "Height of image must be exactly 64, not {}!",
+            pic.dimensions().1
+        );
+        return Err(Error::new(ErrorKind::Other, errortext))?;
     }
     if pic.color().has_alpha() {
-        println!("image must not have transparency!");
-        return Ok(());
+        let errortext = format!("image must not have transparency!");
+        return Err(Error::new(ErrorKind::Other, errortext))?;
     }
     println!("Dimensions of image: {:?}", pic.dimensions());
     let pic = pic.rotate90();
     let new_pic = convert_to_bw(&pic).unwrap();
     new_pic.save("output/output.png")?;
-    print(&new_pic)?;
+    print_file(&new_pic)?;
     Ok(())
 }
 
@@ -38,14 +44,8 @@ fn px_to_black_or_white(pix: &mut Luma<u8>) {
     colormap.map_color(pix);
 }
 
-fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
-    let rows: Vec<[u8; 8]> = image
-        .rows()
-        .map(|row| row_to_bitvec(row).unwrap())
-        .collect();
-    //println!("{:?}", bitvecs);
-    let pi = PrintableImage { data: rows };
-    //pi.data.iter().for_each(|row| println!("{:?}", row));
+fn print_file(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
+    let pi = grey_to_printable(image)?;
     print!("{}", pi.preview());
     let mut ca = CommandAccumulator::new();
     ca.generate_commands(&pi);
@@ -53,6 +53,15 @@ fn print(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
     let mut f = File::create("commands")?;
     f.write_all(commands.as_slice())?;
     Ok(())
+}
+
+fn grey_to_printable(image: &GrayImage) -> Result<PrintableImage, Box<dyn std::error::Error>> {
+    let rows: Vec<[u8; 8]> = image
+        .rows()
+        .map(|row| row_to_bitvec(row).unwrap())
+        .collect();
+    //println!("{:?}", bitvecs);
+    Ok(PrintableImage { data: rows })
 }
 
 fn row_to_bitvec(

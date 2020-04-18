@@ -31,6 +31,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+fn print_file(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
+    let pi = grey_to_printable(image)?;
+    print!("{}", pi.preview());
+    let mut ca = CommandAccumulator::new();
+    ca.generate_commands(&pi);
+    let commands = ca.accu;
+    let mut f = File::create("commands")?;
+    f.write_all(commands.as_slice())?;
+    Ok(())
+}
+
 fn convert_to_bw(image: &DynamicImage) -> ImageResult<GrayImage> {
     let mut gray_image = image.grayscale().into_luma();
     gray_image
@@ -44,22 +55,11 @@ fn px_to_black_or_white(pix: &mut Luma<u8>) {
     colormap.map_color(pix);
 }
 
-fn print_file(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
-    let pi = grey_to_printable(image)?;
-    print!("{}", pi.preview());
-    let mut ca = CommandAccumulator::new();
-    ca.generate_commands(&pi);
-    let commands = ca.accu;
-    let mut f = File::create("commands")?;
-    f.write_all(commands.as_slice())?;
-    Ok(())
-}
-
 fn grey_to_printable(image: &GrayImage) -> Result<PrintableImage, Box<dyn std::error::Error>> {
-    let rows: Vec<[u8; 8]> = image
+    let rows = image
         .rows()
-        .map(|row| row_to_bitvec(row).unwrap())
-        .collect();
+        .map(|row| row_to_bitvec(row))
+        .collect::<Result<Vec<[u8; 8]>, _>>()?;
     //println!("{:?}", bitvecs);
     Ok(PrintableImage { data: rows })
 }

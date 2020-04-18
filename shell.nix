@@ -8,6 +8,7 @@ stdenv.mkDerivation {
 #    cargo-audit
 #    cargo-clippy
     rustup
+    cargo-outdated
   ];
 
   nativeBuildInputs = with pkgs; [

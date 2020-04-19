@@ -31,8 +31,9 @@ impl CommandAccumulator {
     /// Generates all commands necessary to print an image.
     /// Includes some whitespace in front of and behind the label.
     pub fn generate_commands(&mut self, image: &PrintableImage) {
-        self.preamble(true);
+        self.preamble(false);
         self.append_image_rows(image);
+        self.whitespace(56);
         self.postamble(true);
     }
 

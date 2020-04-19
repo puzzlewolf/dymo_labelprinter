@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate log;
+
 use image::*;
 
 use dymo_label::command_accumulator::CommandAccumulator;
@@ -13,8 +16,11 @@ use opt::Opt;
 use opt::Source;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    env_logger::init();
+
     let opt = Opt::from_args();
-    println!("{:?}", opt);
+    debug!("{:?}", opt);
+
     let threshold = opt.threshold;
 
     let pic = match opt.source {
@@ -26,7 +32,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
     };
 
-    println!("Dimensions of image: {:?}", pic.dimensions());
+    info!("Dimensions of image: {:?}", pic.dimensions());
 
     if pic.dimensions().1 != 64 {
         let errortext = format!(
@@ -69,7 +75,7 @@ fn create_image(text: &str, font: &str) -> Result<DynamicImage, Box<dyn std::err
 
 fn print_label(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
     let pi = PrintableImage::printable_from_grey(image)?;
-    print!("{}", pi.preview());
+    debug!("{}", pi.preview());
     let mut ca = CommandAccumulator::new();
     ca.generate_commands(&pi);
     let commands = ca.accu;

@@ -26,7 +26,7 @@ impl PrintableImage {
             .rows()
             .map(row_to_bitvec)
             .collect::<Result<Vec<[u8; 8]>, _>>()?;
-        //println!("{:?}", bitvecs);
+        debug!("Rows: {:?}", rows);
         Ok(PrintableImage { data: rows })
     }
 }

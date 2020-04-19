@@ -1,0 +1,5 @@
+output/
+testdata/
+
+commands
+imagemagick-command

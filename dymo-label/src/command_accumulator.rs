@@ -1,4 +1,4 @@
-use crate::image::PrintableImage;
+use crate::picture::PrintableImage;
 
 #[derive(Default)]
 pub struct CommandAccumulator {

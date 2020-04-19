@@ -42,9 +42,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let pic = pic.rotate90();
     let bw_pic = convert_to_bw(&pic, threshold);
-    bw_pic.save("output/preview.png")?;
 
-    write_commands(&bw_pic)?;
+    if opt.preview {
+        bw_pic.save("preview.png")?;
+    } else {
+        print_label(&bw_pic)?;
+    }
     Ok(())
 }
 
@@ -64,7 +67,7 @@ fn create_image(text: &str, font: &str) -> Result<DynamicImage, Box<dyn std::err
     Ok(image)
 }
 
-fn write_commands(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
+fn print_label(image: &GrayImage) -> Result<(), Box<dyn std::error::Error>> {
     let pi = PrintableImage::printable_from_grey(image)?;
     print!("{}", pi.preview());
     let mut ca = CommandAccumulator::new();

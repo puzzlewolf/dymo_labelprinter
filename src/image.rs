@@ -17,7 +17,8 @@ impl PrintableImage {
                 .for_each(|byte| output.push_str(&format!("{:08b}", byte)));
             output.push_str("\n");
         });
-        output.replace("0", ".").replace("1", "X")
+        // print spaces and boxes
+        output.replace("0", " ").replace("1", &'\u{2588}'.to_string())
     }
 
     pub fn printable_from_grey(image: &GrayImage) -> Result<Self, Box<dyn std::error::Error>> {

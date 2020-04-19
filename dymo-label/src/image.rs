@@ -18,7 +18,9 @@ impl PrintableImage {
             output.push_str("\n");
         });
         // print spaces and boxes
-        output.replace("0", " ").replace("1", &'\u{2588}'.to_string())
+        output
+            .replace("0", " ")
+            .replace("1", &'\u{2588}'.to_string())
     }
 
     pub fn printable_from_grey(image: &GrayImage) -> Result<Self, Box<dyn std::error::Error>> {

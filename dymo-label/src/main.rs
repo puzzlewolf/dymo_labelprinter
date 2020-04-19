@@ -4,7 +4,7 @@ extern crate log;
 use image::*;
 
 use dymo_label::command_accumulator::CommandAccumulator;
-use dymo_label::image::{PrintableImage, convert_to_bw};
+use dymo_label::image::{convert_to_bw, PrintableImage};
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{Error, ErrorKind};
@@ -24,12 +24,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let threshold = opt.threshold;
 
     let pic = match opt.source {
-        Source::Image{image} => {
-            image::open(image)?
-        },
-        Source::Text{text, font} => {
-                create_image(&text, &font)?
-        },
+        Source::Image { image } => image::open(image)?,
+        Source::Text { text, font } => create_image(&text, &font)?,
     };
 
     info!("Dimensions of image: {:?}", pic.dimensions());

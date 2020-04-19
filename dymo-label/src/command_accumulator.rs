@@ -20,7 +20,7 @@ impl CommandAccumulator {
 
     pub fn new() -> Self {
         CommandAccumulator {
-            accu: Default::default()
+            accu: Default::default(),
         }
     }
 

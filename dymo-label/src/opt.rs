@@ -1,5 +1,5 @@
-use structopt::StructOpt;
 use std::path::PathBuf;
+use structopt::StructOpt;
 
 /// Print a label on a Dymo label printer.
 #[derive(StructOpt, Debug)]
@@ -12,8 +12,8 @@ pub(crate) struct Opt {
     #[structopt(short, long)]
     pub preview: bool,
 
-    #[structopt(subcommand)]  // Note that we mark a field as a subcommand
-    pub source: Source 
+    #[structopt(subcommand)]
+    pub source: Source,
 }
 
 #[derive(StructOpt, Debug)]

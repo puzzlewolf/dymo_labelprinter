@@ -1,7 +1,7 @@
 use image::*;
 
-use dymo_hid::command_accumulator::CommandAccumulator;
-use dymo_hid::image::{PrintableImage, convert_to_bw};
+use dymo_label::command_accumulator::CommandAccumulator;
+use dymo_label::image::{PrintableImage, convert_to_bw};
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{Error, ErrorKind};

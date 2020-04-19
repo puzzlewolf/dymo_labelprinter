@@ -104,7 +104,7 @@ fn test_append_row() {
     let mut ca = CommandAccumulator { accu: Vec::new() };
     (0..7).for_each(|_| ca.accu.push(17u8));
 
-    ca.append_data_row(&mut [0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8]);
+    ca.add_data_row(&mut [0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8]);
     assert_eq!(ca.accu[0..7], [17u8; 7]);
     assert_eq!(ca.accu[7], 0x16);
     assert_eq!(ca.accu[8..16], [0, 1, 2, 3, 4, 5, 6, 7]);

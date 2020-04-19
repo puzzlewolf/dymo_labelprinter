@@ -33,11 +33,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "Height of image must be exactly 64, not {}!",
             pic.dimensions().1
         );
-        return Err(Error::new(ErrorKind::Other, errortext))?;
+        return Err(Error::new(ErrorKind::Other, errortext).into());
     }
     if pic.color().has_alpha() {
-        let errortext = format!("image must not have transparency!");
-        return Err(Error::new(ErrorKind::Other, errortext))?;
+        let errortext = "image must not have transparency!".to_string();
+        return Err(Error::new(ErrorKind::Other, errortext).into());
     }
 
     let pic = pic.rotate90();

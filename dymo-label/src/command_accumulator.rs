@@ -1,5 +1,6 @@
 use crate::image::PrintableImage;
 
+#[derive(Default)]
 pub struct CommandAccumulator {
     pub accu: Vec<u8>,
 }
@@ -19,13 +20,13 @@ impl CommandAccumulator {
 
     pub fn new() -> Self {
         CommandAccumulator {
-            accu: Vec::<u8>::new()
+            accu: Default::default()
         }
     }
 
     fn append_image_rows(&mut self, image: &PrintableImage) {
         self.bytes_per_line(8);
-        image.data.iter().for_each(|row| self.add_data_row(&row));
+        image.data.iter().for_each(|row| self.add_data_row(*row));
     }
 
     /// Generates all commands necessary to print an image.
@@ -39,9 +40,9 @@ impl CommandAccumulator {
 
     /// Add the print commands for one row of the image.
     /// Before the line, `bytes_per_line` must be set to the correct value.
-    fn add_data_row(&mut self, row: &[u8; 8]) {
+    fn add_data_row(&mut self, row: [u8; 8]) {
         self.accu.push(Self::SYN);
-        self.accu.extend(row);
+        self.accu.extend(&row);
     }
 
     fn preamble(&mut self, add_whitespace: bool) {
@@ -71,14 +72,14 @@ impl CommandAccumulator {
     /// Seems to take no arguments.
     fn get_status(&mut self) {
         self.accu.push(Self::ESC);
-        self.accu.push('A' as u8);
+        self.accu.push(b'A');
     }
 
     /// The number of bytes in the following row(s).
     /// Seems to take one byte argument.
     fn bytes_per_line(&mut self, num: u8) {
         self.accu.push(Self::ESC);
-        self.accu.push('D' as u8);
+        self.accu.push(b'D');
         self.accu.push(num);
     }
 
@@ -86,7 +87,7 @@ impl CommandAccumulator {
     /// Seems to take one byte argument.
     fn tape_color(&mut self) {
         self.accu.push(Self::ESC);
-        self.accu.push('C' as u8);
+        self.accu.push(b'C');
         self.accu.push(0 as u8);
     }
 
@@ -94,7 +95,7 @@ impl CommandAccumulator {
     /// Seems to take one byte argument.
     fn dottab(&mut self) {
         self.accu.push(Self::ESC);
-        self.accu.push('B' as u8);
+        self.accu.push(b'B');
         self.accu.push(0 as u8);
     }
 }
@@ -104,7 +105,7 @@ fn test_append_row() {
     let mut ca = CommandAccumulator { accu: Vec::new() };
     (0..7).for_each(|_| ca.accu.push(17u8));
 
-    ca.add_data_row(&mut [0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8]);
+    ca.add_data_row([0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8]);
     assert_eq!(ca.accu[0..7], [17u8; 7]);
     assert_eq!(ca.accu[7], 0x16);
     assert_eq!(ca.accu[8..16], [0, 1, 2, 3, 4, 5, 6, 7]);

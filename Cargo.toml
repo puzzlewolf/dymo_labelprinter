@@ -2,4 +2,5 @@
 
 members = [
     "dymo-label",
+    "webserver",
 ]

@@ -1,0 +1,11 @@
+[package]
+name = "webserver"
+version = "0.1.0"
+authors = ["puzzlewolf <mail@nora.pink>"]
+edition = "2018"
+
+[dependencies]
+actix-web = "2"
+actix-rt = "1"
+env_logger = "0.7"
+log = "0.4"

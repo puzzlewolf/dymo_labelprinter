@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Create Label</h2>
+
+<form action="/form" method="post">
+  <label for="label_text">Label text:</label><br>
+  <input type="text" id="label_text" name="label_text" value=""><br>
+
+  <input type="button" value="Preview" onclick="preview()">
+  <input type="submit" value="Print">
+  <script type="text/javascript">
+    function preview() {
+      document.getElementById("preview").src = "/preview/text/" + document.getElementById("label_text").value; 
+    }
+  </script>
+</form> 
+
+<div style="height: 64px">
+  <image id="preview" src="/preview/text/preview_text" style="transform-origin: top left;transform: translateY(64px) rotate(-90deg)">
+</div>
+
+<p>If you click the "Print" button, the label will be printed!</p>
+
+</body>
+</html>
+

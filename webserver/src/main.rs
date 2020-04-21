@@ -1,11 +1,17 @@
 use actix_web::middleware::Logger;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
+use serde::Deserialize;
 
 use dymo_label::picture;
 
 #[macro_use]
 extern crate log;
+
+#[derive(Deserialize, Debug)]
+struct FormData {
+    label_text: String,
+}
 
 #[post("/print/text/{label}")]
 async fn print_text(param: web::Path<String>) -> impl Responder {
@@ -24,6 +30,22 @@ async fn preview_text(param: web::Path<String>) -> impl Responder {
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
     }
 }
+
+#[post("/form")]
+async fn form(form: web::Form<FormData>) -> impl Responder {
+    info!("Form Data: {:?}!", form);
+    HttpResponse::Ok()
+        .content_type("text/plain")
+        .body(format!("Form Data: {:?}!", form))
+}
+
+#[get("/")]
+async fn index() -> impl Responder {
+    HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(include_str!("../static/index.html"))
+}
+
 
 fn handle_print_text(label_text: String) -> Result<(), Box<dyn std::error::Error>> {
     info!("text: {}", label_text);
@@ -44,12 +66,14 @@ fn handle_preview_text(label_text: String) -> Result<Vec<u8>, Box<dyn std::error
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::from_env(Env::default().default_filter_or("info")).init();
+    env_logger::from_env(Env::default().default_filter_or("debug")).init();
 
     HttpServer::new(|| {
         App::new()
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
+            .service(index)
+            .service(form)
             .service(preview_text)
             .service(print_text)
     })

@@ -1,16 +1,17 @@
 #[macro_use]
 extern crate log;
 
-use structopt::StructOpt;
-
 pub mod opt;
+
+use env_logger::Env;
 use opt::Opt;
 use opt::Source;
+use structopt::StructOpt;
 
 use dymo_label::picture;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    env_logger::init();
+    env_logger::from_env(Env::default().default_filter_or("info")).init();
 
     let opt = Opt::from_args();
     debug!("{:?}", opt);

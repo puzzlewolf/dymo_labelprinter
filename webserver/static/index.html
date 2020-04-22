@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <link rel="stylesheet" href="/static/site.css?v=2" type="text/css"/>
+  </head>
 <body>
 
 <h2>Create Label</h2>
 
-<form action="/form" method="post">
+<form action="/print/text" method="post">
+<div>
   <label for="label_text">Label text:</label><br>
   <textarea id="label_text" name="label_text" cols="40" rows="2"></textarea>
   <!-- <input type="text" id="label_text" name="label_text" value=""><br> -->
+</div>
 
+<div>
   <input type="button" value="Preview" onclick="preview()">
   <input type="submit" value="Print">
+</div>
   <script type="text/javascript">
     function preview() {
       var text = document.getElementById("label_text").value;

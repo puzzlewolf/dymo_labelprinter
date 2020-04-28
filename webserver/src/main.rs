@@ -2,7 +2,7 @@ use actix_web::middleware::Logger;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 use serde::{Deserialize};
-use serde_urlencoded;
+//use serde_urlencoded;
 
 use dymo_label::picture;
 
@@ -14,20 +14,20 @@ struct TextFormData {
     label_text: String,
 }
 
-#[derive(Deserialize, Debug)]
-struct ImageFormData {
-    #[serde(deserialize_with = "serde_urlencoded::from_str")]
-    label_image: Vec<u8>,
-}
+//#[derive(Deserialize, Debug)]
+//struct ImageFormData {
+//    #[serde(deserialize_with = "serde_urlencoded::from_str")]
+//    label_image: Vec<u8>,
+//}
 
-#[get("/preview/image/{image}")]
-async fn preview_image(param: web::Path<Vec<u8>>) -> impl Responder {
-    let result = handle_preview_image(&param.into_inner());
-    match result {
-        Ok(img) => HttpResponse::Ok().content_type("image/png").body(img),
-        Err(err) => error_response(err),
-    }
-}
+//#[get("/preview/image/{image}")]
+//async fn preview_image(param: web::Path<Vec<u8>>) -> impl Responder {
+//    let result = handle_preview_image(&param.into_inner());
+//    match result {
+//        Ok(img) => HttpResponse::Ok().content_type("image/png").body(img),
+//        Err(err) => error_response(err),
+//    }
+//}
 
 #[get("/preview/text/{label}")]
 async fn preview_text(param: web::Path<String>) -> impl Responder {
@@ -57,12 +57,12 @@ async fn text() -> impl Responder {
         .body(include_str!("../static/text.html"))
 }
 
-#[get("/image")]
-async fn image() -> impl Responder {
-    HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(include_str!("../static/image.html"))
-}
+//#[get("/image")]
+//async fn image() -> impl Responder {
+//    HttpResponse::Ok()
+//        .content_type("text/html; charset=utf-8")
+//        .body(include_str!("../static/image.html"))
+//}
 
 #[get("/static/site.css")]
 async fn css() -> impl Responder {
@@ -85,12 +85,12 @@ fn handle_preview_text(label_text: String) -> Result<Vec<u8>, Box<dyn std::error
     picture::encode_png(&bw_pic)
 }
 
-fn handle_preview_image(label_image: &Vec<u8>) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    //info!("label text: {}", label_text);
-    let bw_pic = picture::convert_memory_bw_image(&label_image, 128)?;
-
-    picture::encode_png(&bw_pic)
-}
+//fn handle_preview_image(label_image: &Vec<u8>) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+//    //info!("label text: {}", label_text);
+//    let bw_pic = picture::convert_memory_bw_image(&label_image, 128)?;
+//
+//    picture::encode_png(&bw_pic)
+//}
 
 fn error_response(err: Box<dyn std::error::Error>) -> HttpResponse {
     error!("{}", err);
@@ -107,7 +107,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::new("%a %{User-Agent}i"))
             .service(css)
             .service(text)
-            .service(image)
+//            .service(image)
             .service(preview_text)
             .service(print_text)
     })

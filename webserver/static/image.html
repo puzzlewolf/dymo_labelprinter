@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/static/site.css?v=2" type="text/css"/>
+  </head>
+<body>
+
+<h2>Create Label</h2>
+
+<form action="/print/text" method="post">
+<div>
+  <label for="label_image">Label text:</label><br>
+  <!-- <textarea id="label_text" name="label_text" cols="40" rows="2"></textarea> -->
+  <input type="file" id="label_image" name="label_image" value=""><br>
+</div>
+
+<div>
+  <input type="button" value="Preview" onclick="preview()">
+  <input type="submit" value="Print">
+</div>
+  <script type="text/javascript">
+    const file = document.getElementById('label_image').files[0];
+    const reader = new FileReader();
+
+    function preview(file) {
+      //var image = document.getElementById("label_image").value;
+      //document.getElementById("preview").src = "/preview/image/" + file.result;
+      document.getElementById("preview").src = "/preview/image/" + reader.result;
+    }
+
+    reader.onload = preview;
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  </script>
+</form>
+
+<div style="height: 64px">
+  <label for="preview">Preview:</label><br>
+  <image id="preview" src="/preview/text/preview" style="transform-origin: top left;transform: translateY(60px) rotate(-90deg)">
+</div>
+
+<p>If you click the "Print" button, the label will be printed!</p>
+
+</body>
+</html>
+

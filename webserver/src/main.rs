@@ -1,7 +1,8 @@
 use actix_web::middleware::Logger;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
-use serde::Deserialize;
+use serde::{Deserialize};
+use serde_urlencoded;
 
 use dymo_label::picture;
 
@@ -13,9 +14,15 @@ struct TextFormData {
     label_text: String,
 }
 
+#[derive(Deserialize, Debug)]
+struct ImageFormData {
+    #[serde(deserialize_with = "serde_urlencoded::from_str")]
+    label_image: Vec<u8>,
+}
+
 #[get("/preview/image/{image}")]
-async fn preview_image(param: web::Path<String>) -> impl Responder {
-    let result = handle_preview_text(param.to_string());
+async fn preview_image(param: web::Path<Vec<u8>>) -> impl Responder {
+    let result = handle_preview_image(&param.into_inner());
     match result {
         Ok(img) => HttpResponse::Ok().content_type("image/png").body(img),
         Err(err) => error_response(err),
@@ -66,16 +73,21 @@ async fn css() -> impl Responder {
 
 fn handle_print_text(label_text: &str) -> Result<(), Box<dyn std::error::Error>> {
     info!("label text: {}", label_text);
-    let pic = picture::create_image(&label_text, "Ubuntu")?;
-    let bw_pic = picture::convert_to_bw(&pic, 128)?;
+    let bw_pic = picture::create_bw_image(&label_text, "Ubuntu", 128)?;
 
     dymo_label::print_label(&bw_pic)
 }
 
 fn handle_preview_text(label_text: String) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     info!("label text: {}", label_text);
-    let pic = picture::create_image(&label_text, "Ubuntu")?;
-    let bw_pic = picture::convert_to_bw(&pic, 128)?;
+    let bw_pic = picture::create_bw_image(&label_text, "Ubuntu", 128)?;
+
+    picture::encode_png(&bw_pic)
+}
+
+fn handle_preview_image(label_image: &Vec<u8>) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    //info!("label text: {}", label_text);
+    let bw_pic = picture::convert_memory_bw_image(&label_image, 128)?;
 
     picture::encode_png(&bw_pic)
 }

@@ -1,0 +1,280 @@
+body {
+  text-align: center;
+  background: url("img/grey.png") repeat;
+  font-family: 'Roboto', sans-serif;
+  color: #050505;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  src: url('fonts/roboto-v20-latin_latin-ext-300.eot');
+  src: local('Roboto Light'), local('Roboto-Light'),
+       url('fonts/roboto-v20-latin_latin-ext-300.eot?#iefix') format('embedded-opentype'),
+       url('fonts/roboto-v20-latin_latin-ext-300.woff2') format('woff2'),
+       url('fonts/roboto-v20-latin_latin-ext-300.woff') format('woff'),
+       url('fonts/roboto-v20-latin_latin-ext-300.ttf') format('truetype'),
+       url('fonts/roboto-v20-latin_latin-ext-300.svg#Roboto') format('svg');
+}
+
+tt {
+  font-size: large;
+}
+
+h1 {
+  padding-bottom: 1em;
+}
+
+.ui p {
+  line-height: 1.8em;
+}
+
+a, a:visited {
+  color: #0057B3;
+  text-decoration: none;
+}
+
+hr {
+  color: #4aa3ff;
+}
+
+a.brand {
+  color: #050505;
+}
+
+.usage h2 div {
+  display: inline-block;
+  width: 2.5em;
+  text-align: center;
+}
+
+.usage h2 div img {
+  display: inline-block;
+  height: 2em;
+  vertical-align: -30%;
+}
+
+h4:target, h3:target, h2:target {
+  background-color: #ffa;
+}
+
+h4 a, h4 a:visited, h3 a, h3 a:visited {
+  color: #050505;
+}
+
+span.brand {
+  font-family: monospace;
+  font-size: large;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  background-color: #ccc;
+  padding: 0 0.3em;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px hsla(0, 0%, 0%, 0.2);
+}
+
+code.snippet {
+  border: 1px solid #aaa;
+  font-size: 12px;
+  padding: 1em;
+}
+
+.example {
+  display: flex;
+}
+.example div {
+  flex: 1;
+  min-width: 0;
+}
+
+blockquote {
+  font-family: monospace;
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+}
+blockquote:before {
+  color: #ccc;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
+
+li {
+  text-align: left;
+}
+
+abbr {
+  text-decoration: none;
+  color: #444;
+}
+
+.search, .upload, .manage {
+  display: flex;
+  padding: 0 15%;
+}
+
+.manageEmail, .searchTerm, .fileUpload {
+  flex-grow: 1;
+  border: 3px solid;
+  padding: 5px;
+  height: 20px;
+  border-radius: 5px;
+  outline: none;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.manageEmail {
+  border-color: #d93838;
+}
+
+.searchTerm, .fileUpload {
+  border-color: #4aa3ff;
+}
+
+.iconButton {
+  width: 40px;
+}
+
+.publishedUid {
+  margin-left: auto;
+  margin-right: auto;
+  width: 65%;
+  text-align: left;
+}
+.publishedUid div {
+  float: right;
+}
+
+.verificationEmails {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  text-align: left;
+}
+.verificationEmails ul {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+.verificationEmails li {
+  line-height: 1.5em;
+}
+
+.usage li {
+  line-height: 1.5em;
+}
+
+.button {
+  height: 36px;
+  border: 1px solid;
+  text-align: center;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  font-family: inherit;
+  font-weight: bold;
+}
+
+.manageButton {
+  border-color: #d93838;
+  background: #d93838;
+}
+
+.searchButton, .uploadButton {
+  border-color: #4aa3ff;
+  background: #4aa3ff;
+}
+
+.searchButton, .manageButton, .uploadButton {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.button img, .button svg {
+  vertical-align: middle;
+}
+
+.card {
+  position: relative;
+  display: inline-block;
+  margin-top: 4vh;
+  padding: 20px 30px 50px;
+  background-color: #fff;
+  border-top: 5px solid #4aa3ff;
+  box-shadow: 0 2px 6px hsla(0, 0%, 0%, 0.2);
+  width: 80vw;
+  max-width: 800px;
+}
+
+/* This is used to enlarge the card, but is also used to constrain the
+   flow of text in /about.  */
+.card > .about {
+  text-align: left;
+}
+
+span.fingerprint {
+  font-family: monospace;
+  font-size: larger;
+}
+
+span.email {
+  font-family: monospace;
+  font-size: large;
+  white-space: nowrap;
+}
+
+.debug_link {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  margin: 10px;
+  font-size: 12px;
+}
+
+.debug_link a {
+  color: transparent;
+}
+
+.debug_link a:hover {
+  color: #bbb;
+}
+
+.attribution {
+  position: fixed;
+  z-index: -1;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  text-align: right;
+  font-size: 12px;
+  color: #bbb;
+  margin: 10px;
+}
+
+.attribution a {
+  color: #ccc;
+}
+
+input.textbutton {
+  padding: 0px;
+  border: none;
+  background: none;
+  margin: 0px;
+  cursor: pointer;
+  color: blue;
+  font-family: inherit;
+  font-size: inherit;
+}

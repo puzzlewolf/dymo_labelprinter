@@ -114,3 +114,13 @@ pub fn create_image(text: &str, font: &str) -> Result<DynamicImage, Box<dyn std:
     let image = image::load_from_memory(&output.stdout)?;
     Ok(image)
 }
+
+pub fn create_bw_image(text: &str, font: &str, threshold: u8) -> Result<GrayImage, Box<dyn std::error::Error>> {
+    let pic = create_image(text, font)?;
+    convert_to_bw(&pic, threshold)
+}
+
+pub fn convert_memory_bw_image(data: &[u8], threshold: u8) -> Result<GrayImage, Box<dyn std::error::Error>> {
+    let pic = image::load_from_memory(&data)?;
+    convert_to_bw(&pic, threshold)
+}

@@ -14,8 +14,9 @@ stdenv.mkDerivation {
   nativeBuildInputs = with pkgs; [
   #  llvmPackages.libclang
   #  llvmPackages.clang
-  ]; 
+  ];
   # Set Environment Variables
   RUST_BACKTRACE = 1;
+  IM_CONVERT = "${pkgs.imagemagick}/bin/convert";
 }
 

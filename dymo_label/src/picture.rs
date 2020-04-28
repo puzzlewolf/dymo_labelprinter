@@ -101,7 +101,7 @@ pub fn encode_png(image: &GrayImage) -> Result<Vec<u8>, Box<dyn std::error::Erro
 
 pub fn create_image(text: &str, font: &str) -> Result<DynamicImage, Box<dyn std::error::Error>> {
     use std::process::Command;
-    let output = Command::new("convert")
+    let output = Command::new(crate::IM_CONVERT)
         .args(&["-background", "white"])
         .args(&["-fill", "black"])
         .args(&["-font", font])

@@ -1,6 +1,6 @@
 [workspace]
 
 members = [
-    "dymo_label",
-    "webserver",
+    "dymo_print",
+    "dymo_print_server",
 ]

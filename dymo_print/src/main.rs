@@ -8,7 +8,7 @@ use opt::Opt;
 use opt::Source;
 use structopt::StructOpt;
 
-use dymo_label::picture;
+use dymo_print::picture;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::from_env(Env::default().default_filter_or("info")).init();
@@ -28,7 +28,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if opt.preview {
         bw_pic.save("preview.png")?;
     } else {
-        dymo_label::print_label(&bw_pic)?;
+        dymo_print::print_label(&bw_pic)?;
     }
     Ok(())
 }

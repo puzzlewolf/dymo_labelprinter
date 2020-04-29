@@ -4,7 +4,7 @@ use env_logger::Env;
 use serde::{Deserialize};
 //use serde_urlencoded;
 
-use dymo_label::picture;
+use dymo_print::picture;
 
 #[macro_use]
 extern crate log;
@@ -75,7 +75,7 @@ fn handle_print_text(label_text: &str) -> Result<(), Box<dyn std::error::Error>>
     info!("label text: {}", label_text);
     let bw_pic = picture::create_bw_image(&label_text, "Ubuntu", 128)?;
 
-    dymo_label::print_label(&bw_pic)
+    dymo_print::print_label(&bw_pic)
 }
 
 fn handle_preview_text(label_text: String) -> Result<Vec<u8>, Box<dyn std::error::Error>> {

@@ -1,14 +1,12 @@
 [package]
-name = "webserver"
+name = "dymo_print"
 version = "0.1.0"
 authors = ["puzzlewolf <mail@nora.pink>"]
 edition = "2018"
 
 [dependencies]
-actix-web = "2"
-actix-rt = "1"
+bitvec = "0.17.4"
+image = "0.23.3"
+structopt = "0.3"
 env_logger = "0.7"
 log = "0.4"
-serde = "1.0"
-serde_urlencoded = "0.6.1"
-dymo_label = {path = "../dymo_label"}

@@ -3,7 +3,7 @@ use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 use serde::{Deserialize};
 use structopt::StructOpt;
-use std::net::SocketAddr;
+use std::net::{Ipv4Addr, SocketAddr};
 //use serde_urlencoded;
 
 use dymo_print::picture;
@@ -17,6 +17,10 @@ struct Opt {
     /// Set port
     #[structopt(short = "p", long = "port", default_value = "8080")]
     port: u16,
+
+    /// Set address
+    #[structopt(short = "a", long = "address", default_value = "127.0.0.1")]
+    address: Ipv4Addr,
 }
 
 #[derive(Deserialize, Debug)]
@@ -112,7 +116,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::from_env(Env::default().default_filter_or("info")).init();
 
     let opt = Opt::from_args();
-    let bind_address = SocketAddr::from(([127, 0, 0, 1], opt.port));
+    let bind_address = SocketAddr::from((opt.address, opt.port));
 
     HttpServer::new(|| {
         App::new()

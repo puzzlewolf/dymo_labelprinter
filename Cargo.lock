@@ -594,6 +594,7 @@ dependencies = [
  "log",
  "serde",
  "serde_urlencoded",
+ "structopt",
 ]
 
 [[package]]

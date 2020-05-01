@@ -9,7 +9,7 @@ use crate::command_accumulator::CommandAccumulator;
 use std::fs::File;
 use std::io::prelude::*;
 
-static IM_CONVERT: &'static str = env!("IM_CONVERT");
+static IM_CONVERT: &str = env!("IM_CONVERT");
 
 pub fn print_label(image: &image::GrayImage) -> Result<(), Box<dyn std::error::Error>> {
     let pi = crate::picture::PrintableImage::printable_from_grey(image)?;

@@ -7,6 +7,10 @@ edition = "2018"
 [dependencies]
 bitvec = "0.17.4"
 env_logger = "0.7"
-image = "0.23.3"
 log = "0.4"
 structopt = "0.3"
+
+[dependencies.image]
+version = "0.23.3"
+default-features = false
+features = ["gif", "jpeg", "ico", "png", "bmp" ]

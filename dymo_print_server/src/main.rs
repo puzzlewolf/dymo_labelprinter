@@ -60,7 +60,7 @@ async fn print_text(form: web::Form<TextFormData>) -> impl Responder {
     }
 }
 
-#[get("/text")]
+#[get("/")]
 async fn text() -> impl Responder {
     HttpResponse::Ok()
         .content_type("text/html; charset=utf-8")

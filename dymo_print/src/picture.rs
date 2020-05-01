@@ -60,11 +60,13 @@ fn prepare_image(pic: &DynamicImage) -> Result<DynamicImage, Box<dyn std::error:
                 "One dimension of the image must be exactly 64, not {:?}!",
                 pic.dimensions()
             );
+            error!("{}", errortext);
             return Err(Error::new(ErrorKind::Other, errortext).into());
         }
     };
     if pic.color().has_alpha() {
         let errortext = "image must not have transparency!".to_string();
+        error!("{}", errortext);
         return Err(Error::new(ErrorKind::Other, errortext).into());
     }
     Ok(pic)
@@ -111,8 +113,14 @@ pub fn create_image(text: &str, font: &str) -> Result<DynamicImage, Box<dyn std:
         .arg("png:-") //output png image to stdout
         .output()
         .expect("failed to execute imagemagick");
-    let image = image::load_from_memory(&output.stdout)?;
-    Ok(image)
+    if output.status.success() {
+        let image = image::load_from_memory(&output.stdout)?;
+        Ok(image)
+    } else {
+      error!("{}", String::from_utf8_lossy(&output.stderr));
+      let errortext = "Error during imagemagick rendering.";
+      return Err(Error::new(ErrorKind::Other, errortext).into());
+    }
 }
 
 pub fn create_bw_image(text: &str, font: &str, threshold: u8) -> Result<GrayImage, Box<dyn std::error::Error>> {

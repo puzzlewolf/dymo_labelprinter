@@ -119,7 +119,7 @@ pub fn create_image(text: &str, font: &str) -> Result<DynamicImage, Box<dyn std:
     } else {
       error!("{}", String::from_utf8_lossy(&output.stderr));
       let errortext = "Error during imagemagick rendering.";
-      return Err(Error::new(ErrorKind::Other, errortext).into());
+      Err(Error::new(ErrorKind::Other, errortext).into())
     }
 }
 

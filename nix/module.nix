@@ -31,14 +31,6 @@ in {
       serviceConfig.User = "nobody";
     };
 
-    # allow everyone to write to labelwriter
-    services.udev.packages = lib.singleton (pkgs.writeTextFile {
-      name = "allow-write-to-labelwriter";
-      destination = "/etc/udev/rules.d/50-dymo.rules";
-      text = ''
-        SUBSYSTEM=="hidraw", ACTION=="add", ATTRS{idVendor}=="0922", ATTRS{idProduct}=="1001", MODE:="0666"
-      '';
-    });
-
+    services.udev.packages = [ dymoprint ];
   };
 }

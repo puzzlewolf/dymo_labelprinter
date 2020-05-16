@@ -17,6 +17,10 @@ rustPlatform.buildRustPackage rec {
 
   buildInputs = [ imagemagick ];
 
+  postInstall = ''
+    install -D -t $out/lib/udev/rules.d udev-rule/50-dymo.rules
+  '';
+
   IM_CONVERT = "${imagemagick}/bin/convert";
 
   meta = with stdenv.lib; {

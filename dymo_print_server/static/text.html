@@ -29,7 +29,7 @@
       <div style="height: 100px">
         <label for="preview_image">Preview:</label>
         <image id="preview_image"
-               src="/preview/text/preview/Ubuntu"
+               src="/preview/text/Ubuntu/preview"
                height="100"
                style="transform-origin: top left;transform: translateY(64px) rotate(-90deg);padding-bottom: 64px;padding-top: 64px;background: white;border: 2px;border-style: dashed;">
       </div>
@@ -40,7 +40,7 @@
     function gen_preview() {
       const text = document.getElementById("label_text").value;
       const font = document.getElementById("label_font").value;
-      document.getElementById("preview_image").src = "/preview/text/" + encodeURIComponent(text) + "/" + encodeURIComponent(font);
+      document.getElementById("preview_image").src = "/preview/text/" + encodeURIComponent(font) + "/" + encodeURIComponent(text);
     };
 
     function fill_font_dropdown(data) {
@@ -66,8 +66,6 @@
       const data = await getFontsAsync();
       fill_font_dropdown(data);
     })();
-
-      //document.getElementById('label_font').onchange = gen_preview();
 
   </script>
 

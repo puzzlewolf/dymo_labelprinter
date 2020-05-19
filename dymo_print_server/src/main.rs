@@ -46,10 +46,10 @@ struct LabelData {
 //    }
 //}
 
-#[get("/preview/text/{text}/{font}")]
-async fn preview_text(form: web::Path<LabelData>) -> impl Responder {
-    debug!("Form Data: {:?}!", form);
-    let result = handle_preview_text(&form);
+#[get("/preview/text/{font}/{text}")]
+async fn preview_text(data: web::Path<LabelData>) -> impl Responder {
+    debug!("Path Data: {:?}!", data);
+    let result = handle_preview_text(&data);
     match result {
         Ok(img) => HttpResponse::Ok().content_type("image/png").body(img),
         Err(err) => error_response(err),

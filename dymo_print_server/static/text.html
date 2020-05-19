@@ -2,7 +2,7 @@
 <html>
   <head>
     <!--<link rel="stylesheet" href="/static/site.css?v=2" type="text/css"/>-->
-    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css@1.2.0/css/sakura.css" type="text/css">
     <!--<link rel="stylesheet" href="https://newcss.net/new.min.css">-->
   </head>
   <body>
@@ -12,7 +12,7 @@
     <form action="/print/text" method="post">
       <div>
         <label for="label_text">Label text:</label>
-        <textarea id="label_text" name="label_text" style="resize: vertical" placeholder="preview" required></textarea>
+        <textarea id="label_text" name="label_text" style="resize: vertical" placeholder="preview" required oninput="timer_preview()"></textarea>
       </div>
 
       <div class="dropdown" onchange="gen_preview()">
@@ -22,7 +22,6 @@
       </div>
 
       <div>
-        <input type="button" value="Preview" onclick="gen_preview()">
         <input type="submit" value="Print">
       </div>
 
@@ -36,12 +35,26 @@
 
     </form>
 
-  <script type="text/javascript">
+  <script type="text/javascript" defer>
+
     function gen_preview() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
       const text = document.getElementById("label_text").value;
+      if (text === "") text = " ";
       const font = document.getElementById("label_font").value;
       document.getElementById("preview_image").src = "/preview/text/" + encodeURIComponent(font) + "/" + encodeURIComponent(text);
-    };
+    }
+
+    let timer = null;
+    function timer_preview() {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(gen_preview, 300)
+    }
 
     function fill_font_dropdown(data) {
       const dropdown = document.getElementById('label_font');
@@ -54,7 +67,7 @@
         }
         dropdown.add(option);
       }
-    };
+    }
 
     async function getFontsAsync(name) {
       const response = await fetch(`/fonts`);

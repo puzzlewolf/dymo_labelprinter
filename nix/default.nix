@@ -9,8 +9,8 @@ rustPlatform.buildRustPackage rec {
   src = fetchFromGitHub {
     owner = "puzzlewolf";
     repo  = "dymo_labelprinter";
-    rev   = "2b26a3e02f331e3872f0ca99e571790606fa50b3";
-    hash  = "sha256:1b07r3894vlq50pbvp4rjkkk13f7rizm7c5vrbpajnqfrzl0w5pc";
+    rev   = "fc8cd95bcbcda6e549c7bb3f4f546f6d5e679295";
+    hash  = "sha256:0fxd5sa4csia7k291kicwf5lzv2w94i6k2xsj7pxmqhr2k1mq7ff";
   };
 
   cargoSha256 = "sha256:1z2r6wr6vzayw60kx7f8mpxrid1s1ph6c989hvnz0baigcc8pynm";
@@ -18,7 +18,7 @@ rustPlatform.buildRustPackage rec {
   buildInputs = [ imagemagick ];
 
   postInstall = ''
-    install -D -t $out/lib/udev/rules.d udev-rule/50-dymo.rules
+    install -D -t $out/lib/udev/rules.d udev_rule/50-dymo.rules
   '';
 
   IM_CONVERT = "${imagemagick}/bin/convert";

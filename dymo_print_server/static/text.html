@@ -1,38 +1,43 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="/static/site.css?v=2" type="text/css"/>
+    <!--<link rel="stylesheet" href="/static/site.css?v=2" type="text/css"/>-->
+    <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+    <!--<link rel="stylesheet" href="https://newcss.net/new.min.css">-->
   </head>
-<body>
+  <body>
 
-<h2>Create Label</h2>
+    <h2>Create Label</h2>
 
-<form action="/print/text" method="post">
-<div>
-  <label for="label_text">Label text:</label><br>
-  <textarea id="label_text" name="label_text" cols="40" rows="2"></textarea>
-  <!-- <input type="text" id="label_text" name="label_text" value=""><br> -->
-</div>
+    <form action="/print/text" method="post">
+      <div>
+        <label for="label_text">Label text:</label>
+        <textarea id="label_text" name="label_text" style="resize: vertical" placeholder="preview"></textarea>
+        <!-- <input type="text" id="label_text" name="label_text" value=""><br> -->
+      </div>
 
-<div>
-  <input type="button" value="Preview" onclick="preview()">
-  <input type="submit" value="Print">
-</div>
-  <script type="text/javascript">
-    function preview() {
-      var text = document.getElementById("label_text").value;
-      document.getElementById("preview").src = "/preview/text/" + encodeURI(text);
-    }
-  </script>
-</form>
+      <div>
+        <input type="button" value="Preview" onclick="gen_preview()">
+        <input type="submit" value="Print">
+      </div>
 
-<div style="height: 64px">
-  <label for="preview">Preview:</label><br>
-  <image id="preview" src="/preview/text/preview" style="transform-origin: top left;transform: translateY(60px) rotate(-90deg)">
-</div>
+      <script type="text/javascript">
+        function gen_preview() {
+          var text = document.getElementById("label_text").value;
+          document.getElementById("preview_image").src = "/preview/text/" + encodeURIComponent(text);
+        }
+      </script>
 
-<p>If you click the "Print" button, the label will be printed!</p>
+      <div style="height: 100px">
+        <label for="preview_image">Preview:</label>
+        <image id="preview_image"
+               src="/preview/text/preview"
+               height="100"
+               style="transform-origin: top left;transform: translateY(64px) rotate(-90deg);padding-bottom: 64px;padding-top: 64px;background: white;border: 2px;border-style: dashed;">
+      </div>
 
-</body>
+    </form>
+
+  </body>
 </html>
 

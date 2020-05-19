@@ -2,11 +2,13 @@ use actix_web::middleware::Logger;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 use serde::{Deserialize};
+use serde_json::Result as serdeJsonResult;
 use structopt::StructOpt;
 use std::net::{Ipv4Addr, SocketAddr};
 //use serde_urlencoded;
 
 use dymo_print::picture;
+use dymo_print::fonts as dymofonts;
 
 #[macro_use]
 extern crate log;
@@ -24,8 +26,9 @@ struct Opt {
 }
 
 #[derive(Deserialize, Debug)]
-struct TextFormData {
-    label_text: String,
+struct LabelData {
+    text: String,
+    font: String,
 }
 
 //#[derive(Deserialize, Debug)]
@@ -43,9 +46,10 @@ struct TextFormData {
 //    }
 //}
 
-#[get("/preview/text/{label}")]
-async fn preview_text(param: web::Path<String>) -> impl Responder {
-    let result = handle_preview_text(param.to_string());
+#[get("/preview/text/{text}/{font}")]
+async fn preview_text(form: web::Path<LabelData>) -> impl Responder {
+    debug!("Form Data: {:?}!", form);
+    let result = handle_preview_text(&form);
     match result {
         Ok(img) => HttpResponse::Ok().content_type("image/png").body(img),
         Err(err) => error_response(err),
@@ -53,15 +57,24 @@ async fn preview_text(param: web::Path<String>) -> impl Responder {
 }
 
 #[post("/print/text")]
-async fn print_text(form: web::Form<TextFormData>) -> impl Responder {
+async fn print_text(form: web::Form<LabelData>) -> impl Responder {
     debug!("Form Data: {:?}!", form);
-    let result = handle_print_text(&form.label_text);
+    let result = handle_print_text(&form);
     match result {
         Ok(_) => HttpResponse::Ok()
             .content_type("text/plain; charset=utf-8")
             .body("Go get your label!"),
         Err(err) => error_response(err),
     }
+}
+
+#[get("/fonts")]
+async fn fonts() -> impl Responder {
+    let fonts = dymofonts::get_fonts().unwrap();
+    let fonts_json = serde_json::to_string(&fonts).unwrap();
+    HttpResponse::Ok()
+        .content_type("application/json; charset=utf-8")
+        .body(fonts_json)
 }
 
 #[get("/")]
@@ -85,16 +98,16 @@ async fn css() -> impl Responder {
         .body(include_str!("../static/site.css"))
 }
 
-fn handle_print_text(label_text: &str) -> Result<(), Box<dyn std::error::Error>> {
-    info!("label text: {}", label_text);
-    let bw_pic = picture::create_bw_image(&label_text, "Ubuntu", 128)?;
+fn handle_print_text(label_data: &LabelData) -> Result<(), Box<dyn std::error::Error>> {
+    info!("label data: {:?}", label_data);
+    let bw_pic = picture::create_bw_image(&label_data.text, &label_data.font, 128)?;
 
     dymo_print::print_label(&bw_pic)
 }
 
-fn handle_preview_text(label_text: String) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    info!("label text: {}", label_text);
-    let bw_pic = picture::create_bw_image(&label_text, "Ubuntu", 128)?;
+fn handle_preview_text(label_data: &LabelData) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    info!("label data: {:?}", label_data);
+    let bw_pic = picture::create_bw_image(&label_data.text, &label_data.font, 128)?;
 
     picture::encode_png(&bw_pic)
 }
@@ -124,6 +137,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::new("%a %{User-Agent}i"))
             .service(css)
             .service(text)
+            .service(fonts)
 //            .service(image)
             .service(preview_text)
             .service(print_text)

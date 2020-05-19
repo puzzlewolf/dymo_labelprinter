@@ -4,6 +4,7 @@ extern crate log;
 pub mod color_map;
 pub mod command_accumulator;
 pub mod picture;
+pub mod fonts;
 
 use crate::command_accumulator::CommandAccumulator;
 use std::fs::File;

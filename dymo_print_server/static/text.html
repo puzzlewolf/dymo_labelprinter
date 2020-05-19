@@ -12,8 +12,13 @@
     <form action="/print/text" method="post">
       <div>
         <label for="label_text">Label text:</label>
-        <textarea id="label_text" name="label_text" style="resize: vertical" placeholder="preview"></textarea>
-        <!-- <input type="text" id="label_text" name="label_text" value=""><br> -->
+        <textarea id="label_text" name="label_text" style="resize: vertical" placeholder="preview" required></textarea>
+      </div>
+
+      <div class="dropdown" onchange="gen_preview()">
+        <label for="label_font">Label font:</label>
+        <select id="label_font" name="font">
+        </select>
       </div>
 
       <div>
@@ -21,22 +26,50 @@
         <input type="submit" value="Print">
       </div>
 
-      <script type="text/javascript">
-        function gen_preview() {
-          var text = document.getElementById("label_text").value;
-          document.getElementById("preview_image").src = "/preview/text/" + encodeURIComponent(text);
-        }
-      </script>
-
       <div style="height: 100px">
         <label for="preview_image">Preview:</label>
         <image id="preview_image"
-               src="/preview/text/preview"
+               src="/preview/text/preview/Ubuntu"
                height="100"
                style="transform-origin: top left;transform: translateY(64px) rotate(-90deg);padding-bottom: 64px;padding-top: 64px;background: white;border: 2px;border-style: dashed;">
       </div>
 
     </form>
+
+  <script type="text/javascript">
+    function gen_preview() {
+      const text = document.getElementById("label_text").value;
+      const font = document.getElementById("label_font").value;
+      document.getElementById("preview_image").src = "/preview/text/" + encodeURIComponent(text) + "/" + encodeURIComponent(font);
+    };
+
+    function fill_font_dropdown(data) {
+      const dropdown = document.getElementById('label_font');
+      dropdown.length = 0;
+      for (const e of data) {
+        option = document.createElement('option');
+        option.text = e;
+        if (e === "Ubuntu") {
+          option.selected = true;
+        }
+        dropdown.add(option);
+      }
+    };
+
+    async function getFontsAsync(name) {
+      const response = await fetch(`/fonts`);
+      const data = await response.json();
+      return data;
+    }
+
+    (async function() {
+      const data = await getFontsAsync();
+      fill_font_dropdown(data);
+    })();
+
+      //document.getElementById('label_font').onchange = gen_preview();
+
+  </script>
 
   </body>
 </html>

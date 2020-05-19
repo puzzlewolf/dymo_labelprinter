@@ -15,7 +15,6 @@ pub fn get_fonts() -> Result< Vec<String>, Box<dyn std::error::Error>> {
             .map(|s| s.split_at(prefix.len()).1)
             .map(|s| s.into())
             .collect::<Vec<String>>();
-        println!("{:?}", font_names);
         Ok(font_names)
     } else {
         error!("{}", String::from_utf8_lossy(&output.stderr));

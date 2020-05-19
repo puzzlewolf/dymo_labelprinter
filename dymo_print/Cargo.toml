@@ -13,4 +13,4 @@ structopt = "0.3"
 [dependencies.image]
 version = "0.23.3"
 default-features = false
-features = ["gif", "jpeg", "ico", "png", "bmp" ]
+features = ["gif", "ico", "png", "bmp" ]

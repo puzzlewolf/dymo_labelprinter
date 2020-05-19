@@ -1,21 +1,15 @@
 [package]
 name = "dymo_print_server"
 version = "0.1.0"
-authors = ["puzzlewolf <mail@nora.pink>"]
+authors = [ "puzzlewolf <mail@nora.pink>" ]
 edition = "2018"
 
 [dependencies]
 actix-rt = "1"
-# actix-web = "2"
-dymo_print = {path = "../dymo_print"}
+actix-web = { version = "2", default-features = false }
+dymo_print = { path = "../dymo_print" }
 env_logger = "0.7"
 log = "0.4"
 serde = "1.0"
 serde_urlencoded = "0.6.1"
 structopt = "0.3"
-
-[dependencies.actix-web]
-version = "2"
-# do not include the default features, and optionally cherry-pick individual features
-default-features = false
-# features = [""]

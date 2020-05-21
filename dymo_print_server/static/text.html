@@ -12,7 +12,7 @@
     <form action="/print/text" method="post">
       <div>
         <label for="label_text">Label text:</label>
-        <textarea id="label_text" name="label_text" style="resize: vertical" placeholder="preview" required oninput="timer_preview()"></textarea>
+        <textarea id="label_text" name="text" style="width: unset; resize: vertical" placeholder="preview" required oninput="timer_preview()"></textarea>
       </div>
 
       <div class="dropdown" onchange="gen_preview()">

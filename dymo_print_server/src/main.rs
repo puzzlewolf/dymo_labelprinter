@@ -2,7 +2,6 @@ use actix_web::middleware::Logger;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 use serde::{Deserialize};
-use serde_json::Result as serdeJsonResult;
 use structopt::StructOpt;
 use std::net::{Ipv4Addr, SocketAddr};
 //use serde_urlencoded;

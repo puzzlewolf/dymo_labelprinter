@@ -9,8 +9,8 @@ rustPlatform.buildRustPackage rec {
   src = fetchFromGitHub {
     owner = "puzzlewolf";
     repo  = "dymo_labelprinter";
-    rev   = "fc8cd95bcbcda6e549c7bb3f4f546f6d5e679295";
-    hash  = "sha256:0fxd5sa4csia7k291kicwf5lzv2w94i6k2xsj7pxmqhr2k1mq7ff";
+    rev   = "f951074b4967abca88e5d03f9df506e76a8168df";
+    hash  = "sha256:1d2bl6klfk2krh4l38w2j0pxvi81gd6rnx1cmv9phv3alvrgld66";
   };
 
   cargoSha256 = "sha256:1z2r6wr6vzayw60kx7f8mpxrid1s1ph6c989hvnz0baigcc8pynm";

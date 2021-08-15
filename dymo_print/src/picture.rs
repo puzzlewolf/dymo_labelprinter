@@ -16,7 +16,7 @@ impl PrintableImage {
         self.data.iter().for_each(|row| {
             row.iter()
                 .for_each(|byte| output.push_str(&format!("{:08b}", byte)));
-            output.push_str("\n");
+            output.push('\n');
         });
         // print spaces and boxes
         output
@@ -39,7 +39,7 @@ fn row_to_bitvec(
 ) -> Result<[u8; 8], Box<dyn std::error::Error>> {
     let bitvec: BitVec<Msb0, u8> = row.map(|pix| !is_pixel_white(*pix)).collect();
     let bytevec = &bitvec.into_vec();
-    let mut result = [0 as u8; 8];
+    let mut result = [0_u8; 8];
     let bytes = &bytevec.as_slice()[..result.len()]; // panics if not enough data
     result.copy_from_slice(bytes);
     Ok(result)
@@ -97,7 +97,7 @@ pub fn encode_png(image: &GrayImage) -> Result<Vec<u8>, Box<dyn std::error::Erro
         image.width(),
         image.height(),
         ColorType::L8,
-        )?;
+    )?;
     Ok(buffer)
 }
 
@@ -117,18 +117,25 @@ pub fn create_image(text: &str, font: &str) -> Result<DynamicImage, Box<dyn std:
         let image = image::load_from_memory(&output.stdout)?;
         Ok(image)
     } else {
-      error!("{}", String::from_utf8_lossy(&output.stderr));
-      let errortext = "Error during imagemagick rendering.";
-      Err(Error::new(ErrorKind::Other, errortext).into())
+        error!("{}", String::from_utf8_lossy(&output.stderr));
+        let errortext = "Error during imagemagick rendering.";
+        Err(Error::new(ErrorKind::Other, errortext).into())
     }
 }
 
-pub fn create_bw_image(text: &str, font: &str, threshold: u8) -> Result<GrayImage, Box<dyn std::error::Error>> {
+pub fn create_bw_image(
+    text: &str,
+    font: &str,
+    threshold: u8,
+) -> Result<GrayImage, Box<dyn std::error::Error>> {
     let pic = create_image(text, font)?;
     convert_to_bw(&pic, threshold)
 }
 
-pub fn convert_memory_bw_image(data: &[u8], threshold: u8) -> Result<GrayImage, Box<dyn std::error::Error>> {
+pub fn convert_memory_bw_image(
+    data: &[u8],
+    threshold: u8,
+) -> Result<GrayImage, Box<dyn std::error::Error>> {
     let pic = image::load_from_memory(&data)?;
     convert_to_bw(&pic, threshold)
 }

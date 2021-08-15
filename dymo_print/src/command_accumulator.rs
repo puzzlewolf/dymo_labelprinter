@@ -88,7 +88,7 @@ impl CommandAccumulator {
     fn tape_color(&mut self) {
         self.accu.push(Self::ESC);
         self.accu.push(b'C');
-        self.accu.push(0 as u8);
+        self.accu.push(0_u8);
     }
 
     /// Probably whether (or how?) to print the tab character.
@@ -96,7 +96,7 @@ impl CommandAccumulator {
     fn dottab(&mut self) {
         self.accu.push(Self::ESC);
         self.accu.push(b'B');
-        self.accu.push(0 as u8);
+        self.accu.push(0_u8);
     }
 }
 

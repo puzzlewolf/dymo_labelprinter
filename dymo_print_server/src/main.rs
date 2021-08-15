@@ -123,9 +123,9 @@ fn error_response(err: Box<dyn std::error::Error>) -> HttpResponse {
     HttpResponse::InternalServerError().body(err.to_string())
 }
 
-#[actix_rt::main]
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::from_env(Env::default().default_filter_or("info")).init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let opt = Opt::from_args();
     let bind_address = SocketAddr::from((opt.address, opt.port));

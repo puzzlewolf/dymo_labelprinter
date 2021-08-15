@@ -5,12 +5,12 @@ authors = [ "puzzlewolf <mail@nora.pink>" ]
 edition = "2018"
 
 [dependencies]
-actix-rt = "1"
-actix-web = { version = "2", default-features = false }
+actix-rt = "2.2.0"
+actix-web = { version = "3.3.2", default-features = false }
 dymo_print = { path = "../dymo_print" }
-env_logger = "0.7"
-log = "0.4"
-serde = "1.0"
-serde_json = "1.0"
-serde_urlencoded = "0.6.1"
-structopt = "0.3"
+env_logger = "0.9.0"
+log = "0.4.14"
+serde = "1.0.127"
+serde_json = "1.0.66"
+serde_urlencoded = "0.7.0"
+structopt = "0.3.22"

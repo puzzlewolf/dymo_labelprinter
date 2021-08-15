@@ -77,7 +77,7 @@ pub fn convert_to_bw(
     threshold: u8,
 ) -> Result<GrayImage, Box<dyn std::error::Error>> {
     let image = prepare_image(image)?;
-    let mut gray_image = image.grayscale().into_luma();
+    let mut gray_image = image.grayscale().into_luma8();
     gray_image
         .pixels_mut()
         .for_each(|pixel| px_to_black_or_white(pixel, threshold));
@@ -91,7 +91,7 @@ fn px_to_black_or_white(pixel: &mut Luma<u8>, threshold: u8) {
 
 pub fn encode_png(image: &GrayImage) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let mut buffer = Vec::<u8>::new();
-    let encoder = image::png::PNGEncoder::new(&mut buffer);
+    let encoder = image::png::PngEncoder::new(&mut buffer);
     encoder.encode(
         &image.clone().into_raw(),
         image.width(),

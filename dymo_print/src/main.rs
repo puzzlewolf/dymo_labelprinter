@@ -11,7 +11,7 @@ use structopt::StructOpt;
 use dymo_print::picture;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    env_logger::from_env(Env::default().default_filter_or("info")).init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let opt = Opt::from_args();
     debug!("{:?}", opt);

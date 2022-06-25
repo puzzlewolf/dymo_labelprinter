@@ -31,6 +31,6 @@ in {
       serviceConfig.User = "nobody";
     };
 
-    services.udev.packages = [ dymoprint ];
+    services.udev.packages = [ pkgs.dymoprint ];
   };
 }

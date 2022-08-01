@@ -18,7 +18,7 @@ pub fn print_label(image: &image::GrayImage) -> Result<(), Box<dyn std::error::E
     let mut ca = CommandAccumulator::new();
     ca.generate_commands(&pi);
     let commands = ca.accu;
-    let mut f = File::create("/dev/hidraw0")?;
+    let mut f = File::create("/dev/dymoprint")?;
     f.write_all(commands.as_slice())?;
     Ok(())
 }

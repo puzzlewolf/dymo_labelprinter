@@ -26,11 +26,14 @@ in {
     networking.firewall.allowedTCPPorts = if cfg.openFirewall then [ cfg.port ] else [];
 
     systemd.services.dymoprint = {
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig.ExecStart = "${pkgs.dymoprint}/bin/dymo_print_server -a 0.0.0.0 -p ${toString cfg.port}";
-      serviceConfig.User = "nobody";
+      after = [ "dev-dymoprint.device" ];
+      wantedBy = [ "dev-dymoprint.device" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.dymoprint}/bin/dymo_print_server -a 0.0.0.0 -p ${toString cfg.port}";
+        DynamicUser = true;
+      };
     };
 
-    services.udev.packages = [ dymoprint ];
+    services.udev.packages = [ pkgs.dymoprint ];
   };
 }

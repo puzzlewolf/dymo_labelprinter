@@ -6,7 +6,7 @@ let
       [ oxalica_overlay (import ~/.config/nixpkgs/overlays/overlays.nix) ];
   };
   #rust_channel = nixpkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain;
-  rust_channel = nixpkgs.rust-bin.stable."1.52.0".default;
+  rust_channel = nixpkgs.rust-bin.stable."1.83.0".default;
 
   #moz_overlay = import (builtins.fetchTarball
   #  "https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz");

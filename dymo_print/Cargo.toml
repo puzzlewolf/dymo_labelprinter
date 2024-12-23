@@ -5,12 +5,12 @@ authors = ["puzzlewolf <mail@nora.pink>"]
 edition = "2018"
 
 [dependencies]
-bitvec = "0.22.3"
-env_logger = "0.9.0"
+bitvec = "1"
+env_logger = "0.11.0"
 log = "0.4.14"
 structopt = "0.3.22"
 
 [dependencies.image]
-version = "0.23.14"
+version = "0.25"
 default-features = false
 features = ["gif", "ico", "png", "bmp" ]

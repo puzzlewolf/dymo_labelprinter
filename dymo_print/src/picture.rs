@@ -37,7 +37,7 @@ impl PrintableImage {
 fn row_to_bitvec(
     row: image::buffer::Pixels<Luma<u8>>,
 ) -> Result<[u8; 8], Box<dyn std::error::Error>> {
-    let bitvec: BitVec<Msb0, u8> = row.map(|pix| !is_pixel_white(*pix)).collect();
+    let bitvec: BitVec<u8, Msb0> = row.map(|pix| !is_pixel_white(*pix)).collect();
     let bytevec = &bitvec.into_vec();
     let mut result = [0_u8; 8];
     let bytes = &bytevec.as_slice()[..result.len()]; // panics if not enough data
@@ -91,13 +91,8 @@ fn px_to_black_or_white(pixel: &mut Luma<u8>, threshold: u8) {
 
 pub fn encode_png(image: &GrayImage) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let mut buffer = Vec::<u8>::new();
-    let encoder = image::png::PngEncoder::new(&mut buffer);
-    encoder.encode(
-        &image.clone().into_raw(),
-        image.width(),
-        image.height(),
-        ColorType::L8,
-    )?;
+    let encoder = image::codecs::png::PngEncoder::new(&mut buffer);
+    image.write_with_encoder(encoder)?;
     Ok(buffer)
 }
 
